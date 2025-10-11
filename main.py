@@ -5,10 +5,9 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 import matplotlib.pyplot as plt
-from medmnist import INFO, Evaluator
-import support_scripts
+from torchvision.models import resnet101, ResNet101_Weights
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
-    get_dataclass_and_transforms, BATCH_SIZE
+    get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents
 
 if __name__ == '__main__':
     # Print info about the dataset
@@ -30,6 +29,10 @@ if __name__ == '__main__':
     print(train_dataset)
     # print(f"train len: {len(train_dataset)}, val len: {len(val_dataset)}, test len: {len(test_dataset)}")
 
+    # View the contents of the dataset (since its npz file)
+    view_dataset_contents(train_dataset)
+    view_dataset_contents(test_dataset)
+
     # Encapsulate different sub-datasets into DataLoaders
     train_dataloader = data.DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_dataloader = data.DataLoader(dataset=val_dataset, batch_size=BATCH_SIZE, shuffle=False)
@@ -38,5 +41,12 @@ if __name__ == '__main__':
     # Visualize the data - a square montage of 10x10 = 100 images from the dataset
     montage_img = train_dataset.montage(length=10)
     plt.imshow(montage_img)
+    plt.title("Visualization of 100 images from the dataset")
     plt.axis('off')
     plt.show()
+
+
+    # Instantiate the model
+    weights = ResNet101_Weights.DEFAULT
+    model = resnet101(weights=weights)
+    model.eval()

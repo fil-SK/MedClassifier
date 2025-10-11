@@ -30,7 +30,7 @@ https://github.com/MedMNIST/MedMNIST.git
 Neophodno je instalirati sve potrebne pakete, date kroz `requirements.txt` dokument. To je moguće uraditi kroz:
 
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Projekat: zahtevi, struktura, pokretanje
@@ -38,6 +38,26 @@ pip install requirements.txt
 ### Zahtevi
 
 Projekat treba da predstavi use-case primene neuralnih mreža u oblasti medicine. Odabrano je da se radi zadatak **klasifikacije**, na dobro poznatom medicinskom datasetu (MedMNIST), koristeći PyTorch framework. Ovaj projekat može se primeniti na proizvoljan klasifikacioni model, ali je primarni use-case na ResNet101 modelu.
+
+Kod u projektu predstavlja kombinaciju javno dostupnog koda iz MedMNIST repoa, PyTorch frameworka i potrebnih funkcija koje obezbeđuju tražene funkcionalnosti.
+
+### Posmatrani dataset
+
+Posmatra se jedan podskup krovnog [MedMNIST](https://medmnist.com/) dataseta - TissueMNIST.
+
+- **Modalitet podataka**: Bubrežni korteks pod mikroskopom (*Kidney Cortex Microscope*)
+- **Ukupni broj uzoraka**: 236.386
+- **Train / Validation / Test raspodela uzoraka**: 165.466 / 23.640 / 47.280
+- **Klase**: Multi-klasna klasifikacija (8):
+
+    - Collecting Duct, Connecting Tubule
+    - Distal Convoluted Tubule
+    - Glomerular endothelial cells
+    - Interstitial endothelial cells
+    - Leukocytes
+    - Podocytes
+    - Proximal Tubule Segments
+    - Thick Ascending Limb
 
 ### Struktura
 

@@ -1,6 +1,10 @@
 import os
+import random
+
 import medmnist
-from medmnist import INFO
+import numpy as np
+import matplotlib.pyplot as plt
+from medmnist import INFO, TissueMNIST
 import torchvision.transforms as transforms
 
 NUM_EPOCHS = 3
@@ -14,6 +18,8 @@ TRAIN_DIR = os.path.join(DIRECTORY_NAME, "train")
 TEST_DIR = os.path.join(DIRECTORY_NAME, "test")
 VAL_DIR = os.path.join(DIRECTORY_NAME, "val")
 
+random.seed()  # Seeds from current system time by default
+
 info = INFO[DATASET_NAME]
 task = info['task']
 num_channels = info['n_channels']
@@ -22,6 +28,7 @@ num_classes = len(info['label'])
 def print_dataset_info() -> None:
     """
     Prints information about the dataset.
+
     Args:
         (None)
     Returns:
@@ -34,6 +41,7 @@ def print_dataset_info() -> None:
 def get_dataclass_and_transforms():
     """
     Returns a DataClass object, used to download dataset, and Transforms, to apply data augmentation.
+
     Args:
         (None)
     Returns:
@@ -51,6 +59,7 @@ def get_dataclass_and_transforms():
 def create_directories() -> bool:
     """
     Creates directories needed for the TissueMNIST dataset subsets - train, val, test.
+
     Args:
         (None)
     Returns:
@@ -66,3 +75,24 @@ def create_directories() -> bool:
     else:
         print(f"\nDirectory {DIRECTORY_NAME} already exists. Using existing directory and contents within.\n")
         return False
+
+def view_dataset_contents(dataset:TissueMNIST):
+    """
+    For the passed dataset, takes random image of index 1-10 and displays its image and label.
+
+    Args:
+        (None)
+    Returns:
+        (None)
+    """
+    idx = random.randint(1, 10)
+    dataset_label_mapping = info['label']
+
+    get_label_as_idx = dataset.labels[idx][0]
+    label_name = dataset_label_mapping[str(get_label_as_idx)]       # Because dataset_label_mapping is a dict (str, str)
+
+    plt.imshow(dataset.imgs[idx])
+    plt.title(f"Label: {label_name}")
+
+    plt.axis('off')
+    plt.show()
