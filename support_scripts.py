@@ -1,5 +1,6 @@
 import os
 import random
+from datetime import datetime
 from tqdm import tqdm
 import medmnist
 import matplotlib.pyplot as plt
@@ -15,6 +16,7 @@ LEARNING_RATE = 0.001
 
 DIRECTORY_NAME = "TissueMNIST_Dataset"
 DATASET_NAME = "tissuemnist"
+EXPORT_DIRECTORY = "exported_models"
 
 TRAIN_DIR = os.path.join(DIRECTORY_NAME, "train")
 TEST_DIR = os.path.join(DIRECTORY_NAME, "test")
@@ -190,3 +192,16 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
                 "Test loss": f"{test_loss / total_samples:.4f}",
                 "Test accuracy": f"{metric.compute().item():.4f}"
             })
+
+def export_trained_model(model: ResNet) -> None:
+
+    os.makedirs(EXPORT_DIRECTORY, exist_ok=True)
+
+    # Create a filename with current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_path = os.path.join(EXPORT_DIRECTORY, f"model_{timestamp}.pt")
+
+    # Save the model
+    torch.save(model.state_dict(), model_path)
+
+    print(f"Model exported to {model_path}")

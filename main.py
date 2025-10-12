@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from torchvision.models import resnet101, ResNet101_Weights
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
     get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
-    NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch
+    NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model
 
 if __name__ == '__main__':
     # Print info about the dataset
@@ -73,3 +73,5 @@ if __name__ == '__main__':
 
     # Evaluate the trained model
     perform_inference(model, test_dataloader)
+
+    export_trained_model(model)
