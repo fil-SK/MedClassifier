@@ -65,9 +65,8 @@ if __name__ == '__main__':
     # TODO: You can try Adam optimizer
 
     # Perform the training of the model
-    pbar = tqdm(range(NUM_EPOCHS), desc="Training the model", unit="epoch")
-
-    for epoch in pbar:
+    for epoch in range(NUM_EPOCHS):
+        print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}")
         train_model_per_batch(model, train_dataloader, loss_function, optimizer)
         evaluate_model_per_batch(model, val_dataloader, loss_function)
 
