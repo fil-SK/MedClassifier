@@ -72,6 +72,7 @@ if __name__ == '__main__':
         evaluate_model_per_batch(model, val_dataloader, loss_function)
 
     # Evaluate the trained model
+    model.cpu() # During evaluation, move model to CPU
     perform_inference(model, test_dataloader)
 
     export_trained_model(model)
