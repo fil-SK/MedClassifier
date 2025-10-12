@@ -4,7 +4,7 @@ from datetime import datetime
 from tqdm import tqdm
 import medmnist
 import matplotlib.pyplot as plt
-from medmnist import INFO, TissueMNIST, Evaluator
+from medmnist import INFO, TissueMNIST
 import torch
 import torchvision.transforms as transforms
 from torchvision.models import ResNet
@@ -106,6 +106,15 @@ def view_dataset_contents(dataset:TissueMNIST):
 
 
 def perform_inference(model : ResNet, dataloader : torch.utils.data.DataLoader) -> None:
+    """
+    Performs the evaluation of the `model` on data from `dataloader`.
+
+    Args:
+        model (ResNet): Model to be evaluated.
+        dataloader (torch.utils.data.DataLoader): Dataloader on which to perform evaluation.
+    Returns:
+        (None)
+    """
 
     pbar = tqdm(dataloader, desc="Evaluating", unit="batch")
 
@@ -133,6 +142,19 @@ def perform_inference(model : ResNet, dataloader : torch.utils.data.DataLoader) 
 
 def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoader, loss_fn : torch.nn.Module,
                 optimizer: torch.optim.Optimizer) -> None:
+    """
+    Performs the training of the `model` on `dataloader`. The training within this function is performed per one epoch,
+    in a set number of batches. The function tracks the training loss and accuracy.
+
+    Args:
+        model (ResNet): Model to be trained.
+        dataloader (torch.utils.data.DataLoader): Dataloader on which to perform training.
+        loss_fn (torch.nn.Module): Loss function.
+        optimizer (torch.optim.Optimizer): Optimizer.
+
+    Returns:
+        (None)
+    """
 
     pbar = tqdm(dataloader, desc="Training", unit="batch")
 
@@ -161,8 +183,6 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
         loss.backward()
         optimizer.step()
 
-
-
         # Live tqdm update
         pbar.set_postfix({
             "Train loss": f"{train_loss / total_samples:.4f}",
@@ -171,6 +191,19 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
 
 
 def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLoader, loss_fn: torch.nn.Module) -> None:
+    """
+    Performs the evaluation on the `model` on `dataloader`. The evaluation within this function is performed per one epoch,
+    in a set number of batches. The function tracks the test loss and accuracy. This function is being called after
+    one training iteration has completed, to check the quality of the training iteration.
+
+    Args:
+        model (ResNet): Model to be evaluated.
+        dataloader (torch.utils.data.DataLoader): Dataloader on which to perform evaluation.
+        loss_fn (torch.nn.Module): Loss function.
+
+    Returns:
+        (None)
+    """
     pbar = tqdm(dataloader, desc="Training validation", unit="batch")
 
     metric = MulticlassAccuracy(num_classes=num_classes)
@@ -185,7 +218,7 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
     with torch.inference_mode():
         for input_image, target_label in pbar:
             input_image, target_label = input_image.to(device), target_label.to(device)
-            
+
             test_prediction_output = model(input_image)
             loss = loss_fn(test_prediction_output, target_label.squeeze())
 
@@ -202,7 +235,17 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
             })
 
 def export_trained_model(model: ResNet) -> None:
+    """
+    After the training of the model is performed, such model is to be exported, so that later, it can be loaded
+    and used for classification immediately. Each time this function is called, the model will have a unique name,
+    as each name is generated on the current timestamp when the function was called.
 
+    Args:
+        model (ResNet): Trained model to be exported.
+
+    Returns:
+        (None)
+    """
     os.makedirs(EXPORT_DIRECTORY, exist_ok=True)
 
     # Create a filename with current timestamp
