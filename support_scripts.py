@@ -1,11 +1,13 @@
 import os
 import random
-
+from tqdm import tqdm
 import medmnist
-import numpy as np
 import matplotlib.pyplot as plt
-from medmnist import INFO, TissueMNIST
+from medmnist import INFO, TissueMNIST, Evaluator
+import torch
 import torchvision.transforms as transforms
+from torchvision.models import ResNet
+from torchmetrics.classification import MulticlassAccuracy
 
 NUM_EPOCHS = 3
 BATCH_SIZE = 128
@@ -50,7 +52,8 @@ def get_dataclass_and_transforms():
     DataClass = getattr(medmnist, info['python_class'])
 
     data_transform = transforms.Compose([
-        transforms.ToTensor(),
+        transforms.ToTensor(),                           # (1,H,W)
+        transforms.Lambda(lambda x: x.repeat(3, 1, 1)),  # (3,H,W)
         transforms.Normalize(mean=[.5], std=[.5])
     ])
 
@@ -96,3 +99,23 @@ def view_dataset_contents(dataset:TissueMNIST):
 
     plt.axis('off')
     plt.show()
+
+
+def perform_inference(model : ResNet, dataloader : torch.utils.data.DataLoader) -> None:
+
+    metric = MulticlassAccuracy(num_classes=num_classes)
+    model.eval()
+
+    with torch.inference_mode():
+        for input_image, target_label in tqdm(dataloader, desc="Evaluating"):
+            predicted_output = model(input_image)       # Gets output into shape (batch, num_classes)
+
+            # Perform preprocessing on the model's output
+            predicted_probabilities = predicted_output.softmax(dim=1)      # Turn logits -> predictions ; Take dim=1 to target num_classes in shape
+            #predicted_class = predicted_probabilities.argmax(dim=1)
+
+            target_label = target_label.squeeze()
+            metric.update(predicted_probabilities, target_label)
+
+        acc = metric.compute()
+        print(f"Accuracy: {acc:.4f}")
