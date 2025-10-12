@@ -68,6 +68,10 @@ root
 |--- .venv
 |--- README.md
 |--- main.py
+|--- exported_models
+        |--- model_20251012_173336.pt
+|--- result_logs
+        |--- log_21-03_12-10-2025.txt
 |--- support_scripts.py
 |--- MedMNIST
 |--- TissueMNIST_Dataset
