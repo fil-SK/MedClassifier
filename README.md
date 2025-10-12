@@ -85,3 +85,69 @@ Pojašnjenje:
 - `MedMNIST` - Folder koji sadrži klonirani MedMNIST repo.
 - `TissueMNIST_Dataset` - Folder koji sadrži slike korišćene za proces klasifikacije, grupisane u podfoldere koji predstavljaju podskupove glavnog dataseta. Sadržaj foldera čini `tissuemnist.npz`, što je NumPy kontejner.
 - `tissuemnist.npz` - NumPy kontejner koji sadrži više `.npy` fajlova u arhivi. Svaki podfolder sadrži njemu relevantne slike.
+
+## Tok programa
+
+Sav kod koji se izvršava nalazi se u `main.py` fajlu, a koji interno poziva skripte i parametre iz `support_scripts.py` fajla. `main.py` ima delove koji su zakomentarisani, a koji mogu biti korisni pri pregledu:
+
+- `print_dataset_info()`: Ispisuje informacije o korišćenom datasetu.
+- `view_dataset_contents(train_dataset)`: Preko matplotlib-a prikazuje sliku i njoj odgovarajuću labelu, za proizvoljno uzetu sliku iz dataseta.
+- `train_dataset.montage(length=10)`: Prikazuje 100 slika iz dataseta.
+
+Izvršavanje `main.py` sastoji se iz (uključujući i zakomentarisane delove):
+
+- Ispis informacija o korišćenom datasetu.
+- Kreiranje foldera u kom će se naći dataset(ovi) - svaki skup (train, val, test) ima svoj folder. Preuzimanje datih skupova.
+- Prikaz sadržaja dataseta.
+- Enkapsulacija dataseta u dataloader-e za dalju upotrebu.
+- Vizualizacija dataseta kroz 100 slika.
+- Instanciranje modela i promenu finalnog FC sloja, tako da output-uje 8 klasa (toliko klasa postoji u korišćenom datasetu).
+- Izvršavanje klasifikacije na originalnom, netreniranom modelu.
+- Treniranje modela: po epohi, vrši se trening a potom validacija izvršenog treninga u toj epohi.
+- Nakon treniranja u potpunosti, validacija takvog modela i njegovo čuvanje.
+
+## Google Colab
+
+Na lokalnom računaru, resursi su nedovoljni za efikasno izvršavanje (nedostatak GPU-a). Iz tog razloga, ovaj kod može se pokrenuti i kroz Google Colab.
+
+Neophodno je upload-ovati sve sadržaje root foldera (nakon svih kloniranja projekta i potrebnih pomoćnih repoa, kao i preuzimanja dataseta) na Vaš Google Drive.
+
+Nakon toga, napraviti Colab stranicu i na njoj mount-ovati uploadovan sadržaj:
+
+```
+from google.colab import drive
+drive.mount('/content/gdrive')
+```
+
+Instalirati sve potrebne pakete:
+
+```
+!pip install -r /content/gdrive/MyDrive/som_proj/requirements.txt
+```
+
+Zatim, na putanji na kojoj se nalazi `main.py` fajl, pokrenuti ga:
+
+```
+!python /content/gdrive/MyDrive/som_proj/main.py
+```
+
+Dalje, izvršavanje će teći u potpunosti kao i na lokalnom računaru.
+
+Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google Colab:
+
+- Odabrati tab `Runtime`, pa odatle `Change runtime type`.
+- Odabrati `T4 GPU`.
+- Kliknuti na `Save`.
+
+## Rezultati
+
+### log 21.03 12.10.2025.
+
+- Prvi test za klasifikaciju i optimizaciju modela. Rezultati zasad nedovoljno dobri. Inicijalno, model je pokazao preciznost od 10%. Treniranjem modela preciznost podignuta na oko 50%.
+- Primenjeni hiperparametri:
+  - Broj epoha: 3
+  - Learning rate: 0.001
+  - Batch size: 128
+  - Model: ResNet101
+  - Loss funkcija: Cross Entropy Loss
+  - Optimizer: SGD
