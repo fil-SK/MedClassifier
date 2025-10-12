@@ -41,7 +41,9 @@ Projekat treba da predstavi use-case primene neuralnih mreža u oblasti medicine
 
 Kod u projektu predstavlja kombinaciju javno dostupnog koda iz MedMNIST repoa, PyTorch frameworka i potrebnih funkcija koje obezbeđuju tražene funkcionalnosti.
 
-### Posmatrani dataset
+### Spoljašnji alati
+
+#### Posmatrani dataset
 
 Posmatra se jedan podskup krovnog [MedMNIST](https://medmnist.com/) dataseta - TissueMNIST.
 
@@ -58,6 +60,18 @@ Posmatra se jedan podskup krovnog [MedMNIST](https://medmnist.com/) dataseta - T
     - Podocytes
     - Proximal Tubule Segments
     - Thick Ascending Limb
+
+#### PyTorch framework
+
+Korišćen je PyTorch kao okvirni framework za rad i njihov ugrađeni [ResNet101 model](https://docs.pytorch.org/vision/main/_modules/torchvision/models/resnet.html#ResNet101_Weights), sa pretreniranim weight-ovima.
+
+#### Torchmetrics
+
+Za analizu performansi, korišćena je metrika preciznosti (accuracy), kroz biblioteku [Torchmetrics](https://lightning.ai/docs/torchmetrics/stable/), podržanu kroz korišćeni PyTorch framework.
+
+#### Kalibracija hiperparametara
+
+Kako bi se izbeglo ručno kalibrisanje hiperparametara, odlučeno je da se koristi neki od mogućih framework-ova namenjenih za tu svrhu. Odabrano je da se koristi [Optuna](https://optuna.org/).
 
 ### Struktura
 
