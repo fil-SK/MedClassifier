@@ -29,6 +29,8 @@ task = info['task']
 num_channels = info['n_channels']
 num_classes = len(info['label'])
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 def print_dataset_info() -> None:
     """
     Prints information about the dataset.
@@ -140,9 +142,12 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
     total_samples = 0
     train_loss = 0.0
 
+    model.to(device)
     model.train()
 
     for input_image, target_label in pbar:
+        input_image, target_label = input_image.to(device), target_label.to(device)
+
         predicted_output = model(input_image)
         loss = loss_fn(predicted_output, target_label.squeeze())
 
@@ -174,10 +179,13 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
     total_samples = 0
     test_loss = 0.0
 
+    model.to(device)
     model.eval()
 
     with torch.inference_mode():
         for input_image, target_label in pbar:
+            input_image, target_label = input_image.to(device), target_label.to(device)
+            
             test_prediction_output = model(input_image)
             loss = loss_fn(test_prediction_output, target_label.squeeze())
 
