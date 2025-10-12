@@ -103,11 +103,13 @@ def view_dataset_contents(dataset:TissueMNIST):
 
 def perform_inference(model : ResNet, dataloader : torch.utils.data.DataLoader) -> None:
 
+    pbar = tqdm(dataloader, desc="Evaluating", unit="batch")
+
     metric = MulticlassAccuracy(num_classes=num_classes)
     model.eval()
 
     with torch.inference_mode():
-        for input_image, target_label in tqdm(dataloader, desc="Evaluating"):
+        for input_image, target_label in pbar:
             predicted_output = model(input_image)       # Gets output into shape (batch, num_classes)
 
             # Perform preprocessing on the model's output
@@ -117,5 +119,74 @@ def perform_inference(model : ResNet, dataloader : torch.utils.data.DataLoader) 
             target_label = target_label.squeeze()
             metric.update(predicted_probabilities, target_label)
 
+            # Check metrics update within the batch
+            acc = metric.compute().item()
+            pbar.set_postfix({"Accuracy": f"{acc:.3f}"})
+
         acc = metric.compute()
         print(f"Accuracy: {acc:.4f}")
+
+
+def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoader, loss_fn : torch.nn.Module,
+                optimizer: torch.optim.Optimizer) -> None:
+
+    pbar = tqdm(dataloader, desc="Training", unit="batch")
+
+    metric = MulticlassAccuracy(num_classes=num_classes)
+    metric.reset()  # Reset at start of each epoch
+
+    total_samples = 0
+    train_loss = 0.0
+
+    model.train()
+
+    for input_image, target_label in pbar:
+        predicted_output = model(input_image)
+        loss = loss_fn(predicted_output, target_label.squeeze())
+
+        batch_size = input_image.size(0)
+        total_samples += batch_size
+
+        train_loss += loss.item() * batch_size
+        metric.update(predicted_output, target_label.squeeze())     # Train accuracy
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+
+
+        # Live tqdm update
+        pbar.set_postfix({
+            "Train loss": f"{train_loss / total_samples:.4f}",
+            "Train accuracy": f"{metric.compute().item():.4f}"
+        })
+
+
+def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLoader, loss_fn: torch.nn.Module) -> None:
+    pbar = tqdm(dataloader, desc="Training validation", unit="batch")
+
+    metric = MulticlassAccuracy(num_classes=num_classes)
+    metric.reset()  # Reset at start of each epoch
+
+    total_samples = 0
+    test_loss = 0.0
+
+    model.eval()
+
+    with torch.inference_mode():
+        for input_image, target_label in pbar:
+            test_prediction_output = model(input_image)
+            loss = loss_fn(test_prediction_output, target_label.squeeze())
+
+            batch_size = input_image.size(0)
+            total_samples += batch_size
+
+            test_loss += loss.item() * batch_size
+            metric.update(test_prediction_output, target_label.squeeze())  # Test accuracy
+
+            # Live tqdm update
+            pbar.set_postfix({
+                "Test loss": f"{test_loss / total_samples:.4f}",
+                "Test accuracy": f"{metric.compute().item():.4f}"
+            })

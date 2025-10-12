@@ -1,10 +1,12 @@
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 from torchvision.models import resnet101, ResNet101_Weights
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
-    get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes
+    get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
+    NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch
 
 if __name__ == '__main__':
     # Print info about the dataset
@@ -23,7 +25,7 @@ if __name__ == '__main__':
     test_dataset = DataClass(split='test', transform=data_transform, download=to_download_dataset, root=f"./{TEST_DIR}")
 
     # Info on used dataset
-    print(train_dataset)
+    # print(train_dataset)
     # print(f"train len: {len(train_dataset)}, val len: {len(val_dataset)}, test len: {len(test_dataset)}")
 
     # View the contents of the dataset (since its npz file)
@@ -50,9 +52,24 @@ if __name__ == '__main__':
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     model.eval()
 
+    # Perform the classification on the test dataset --- using the original, untrained model
+    perform_inference(model, test_dataloader)
+
+
+    # Train the model, to improve the performance
+
     # Set the loss function and optimizer
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 
-    # Perform the classification on the test dataset
+    # TODO: You can try Adam optimizer
+
+    # Perform the training of the model
+    pbar = tqdm(range(NUM_EPOCHS), desc="Training the model", unit="epoch")
+
+    for epoch in pbar:
+        train_model_per_batch(model, train_dataloader, loss_function, optimizer)
+        evaluate_model_per_batch(model, val_dataloader, loss_function)
+
+    # Evaluate the trained model
     perform_inference(model, test_dataloader)
