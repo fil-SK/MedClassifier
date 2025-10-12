@@ -158,7 +158,7 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
 
     pbar = tqdm(dataloader, desc="Training", unit="batch")
 
-    metric = MulticlassAccuracy(num_classes=num_classes)
+    metric = MulticlassAccuracy(num_classes=num_classes).to(device)
     metric.reset()  # Reset at start of each epoch
 
     total_samples = 0
@@ -206,7 +206,7 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
     """
     pbar = tqdm(dataloader, desc="Training validation", unit="batch")
 
-    metric = MulticlassAccuracy(num_classes=num_classes)
+    metric = MulticlassAccuracy(num_classes=num_classes).to(device)
     metric.reset()  # Reset at start of each epoch
 
     total_samples = 0
