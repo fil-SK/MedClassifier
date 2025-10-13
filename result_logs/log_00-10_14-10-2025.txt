@@ -1,0 +1,53 @@
+
+Directory TissueMNIST_Dataset already exists. Using existing directory and contents within.
+
+[I 2025-10-13 20:59:10,672] A new study created in memory with name: no-name-c1020a4e-12ae-407b-946e-a8a4997a9063
+
+Running trial 0 with params: {'lr': 0.0007348644847412828, 'batch_size': 128, 'momentum': 0.8192457974528595, 'weight_decay': 2.0725385072121014e-06, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [04:48<00:00,  4.48batch/s, Train loss=1.1253, Train accuracy=0.4594]
+Training validation: 100% 185/185 [00:16<00:00, 11.09batch/s, Test loss=1.1231, Test accuracy=0.4823]
+Training: 100% 1293/1293 [04:49<00:00,  4.46batch/s, Train loss=1.0526, Train accuracy=0.4841]
+Training validation: 100% 185/185 [00:16<00:00, 11.28batch/s, Test loss=1.0756, Test accuracy=0.5045]
+Training: 100% 1293/1293 [04:48<00:00,  4.48batch/s, Train loss=0.9518, Train accuracy=0.5384]
+Training validation: 100% 185/185 [00:16<00:00, 11.34batch/s, Test loss=0.9540, Test accuracy=0.5188]
+Trial 0 finished: accuracy=0.5188, params={'lr': 0.0007348644847412828, 'batch_size': 128, 'momentum': 0.8192457974528595, 'weight_decay': 2.0725385072121014e-06, 'optimizer': 'Adam'}
+[I 2025-10-13 21:14:27,276] Trial 0 finished with value: 0.5187625885009766 and parameters: {'lr': 0.0007348644847412828, 'batch_size': 128, 'momentum': 0.8192457974528595, 'weight_decay': 2.0725385072121014e-06, 'optimizer': 'Adam'}. Best is trial 0 with value: 0.5187625885009766.
+
+Running trial 1 with params: {'lr': 0.0011622426660546756, 'batch_size': 32, 'momentum': 0.7936328239277217, 'weight_decay': 8.938150919267048e-05, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [04:48<00:00,  4.49batch/s, Train loss=1.1023, Train accuracy=0.4898]
+Training validation: 100% 185/185 [00:16<00:00, 11.20batch/s, Test loss=1.0178, Test accuracy=0.4897]
+Training: 100% 1293/1293 [04:47<00:00,  4.50batch/s, Train loss=0.9942, Train accuracy=0.5270]
+Training validation: 100% 185/185 [00:16<00:00, 11.24batch/s, Test loss=0.9783, Test accuracy=0.5307]
+Training: 100% 1293/1293 [04:46<00:00,  4.52batch/s, Train loss=0.9405, Train accuracy=0.5495]
+Training validation: 100% 185/185 [00:16<00:00, 11.44batch/s, Test loss=1.0126, Test accuracy=0.5326]
+Trial 1 finished: accuracy=0.5326, params={'lr': 0.0011622426660546756, 'batch_size': 32, 'momentum': 0.7936328239277217, 'weight_decay': 8.938150919267048e-05, 'optimizer': 'Adam'}
+[I 2025-10-13 21:29:38,281] Trial 1 finished with value: 0.5326143503189087 and parameters: {'lr': 0.0011622426660546756, 'batch_size': 32, 'momentum': 0.7936328239277217, 'weight_decay': 8.938150919267048e-05, 'optimizer': 'Adam'}. Best is trial 1 with value: 0.5326143503189087.
+
+Running trial 2 with params: {'lr': 0.00036216030643492874, 'batch_size': 128, 'momentum': 0.9603010070374582, 'weight_decay': 6.874316792431515e-05, 'optimizer': 'SGD'}
+Training: 100% 1293/1293 [04:36<00:00,  4.68batch/s, Train loss=0.8541, Train accuracy=0.5902]
+Training validation: 100% 185/185 [00:16<00:00, 11.25batch/s, Test loss=0.8960, Test accuracy=0.5657]
+Training: 100% 1293/1293 [04:36<00:00,  4.68batch/s, Train loss=0.8304, Train accuracy=0.6021]
+Training validation: 100% 185/185 [00:16<00:00, 11.12batch/s, Test loss=0.8877, Test accuracy=0.5697]
+Training: 100% 1293/1293 [04:35<00:00,  4.69batch/s, Train loss=0.8199, Train accuracy=0.6076]
+Training validation: 100% 185/185 [00:16<00:00, 11.43batch/s, Test loss=0.8844, Test accuracy=0.5749]
+Trial 2 finished: accuracy=0.5749, params={'lr': 0.00036216030643492874, 'batch_size': 128, 'momentum': 0.9603010070374582, 'weight_decay': 6.874316792431515e-05, 'optimizer': 'SGD'}
+[I 2025-10-13 21:44:15,654] Trial 2 finished with value: 0.5748878717422485 and parameters: {'lr': 0.00036216030643492874, 'batch_size': 128, 'momentum': 0.9603010070374582, 'weight_decay': 6.874316792431515e-05, 'optimizer': 'SGD'}. Best is trial 2 with value: 0.5748878717422485.
+
+Running trial 3 with params: {'lr': 0.0030019649789029107, 'batch_size': 128, 'momentum': 0.8857832750726036, 'weight_decay': 1.3564996315644982e-06, 'optimizer': 'SGD'}
+Training: 100% 1293/1293 [04:36<00:00,  4.68batch/s, Train loss=0.8131, Train accuracy=0.6126]
+Training validation: 100% 185/185 [00:16<00:00, 11.39batch/s, Test loss=0.8787, Test accuracy=0.5843]
+Training: 100% 1293/1293 [04:35<00:00,  4.69batch/s, Train loss=0.8008, Train accuracy=0.6178]
+Training validation: 100% 185/185 [00:16<00:00, 11.39batch/s, Test loss=0.8734, Test accuracy=0.5874]
+Training: 100% 1293/1293 [04:36<00:00,  4.68batch/s, Train loss=0.7911, Train accuracy=0.6213]
+Training validation: 100% 185/185 [00:16<00:00, 11.03batch/s, Test loss=0.8689, Test accuracy=0.5900]
+Trial 3 finished: accuracy=0.5900, params={'lr': 0.0030019649789029107, 'batch_size': 128, 'momentum': 0.8857832750726036, 'weight_decay': 1.3564996315644982e-06, 'optimizer': 'SGD'}
+[I 2025-10-13 21:58:52,816] Trial 3 finished with value: 0.5899568796157837 and parameters: {'lr': 0.0030019649789029107, 'batch_size': 128, 'momentum': 0.8857832750726036, 'weight_decay': 1.3564996315644982e-06, 'optimizer': 'SGD'}. Best is trial 3 with value: 0.5899568796157837.
+
+Running trial 4 with params: {'lr': 0.0010352552665602768, 'batch_size': 128, 'momentum': 0.8891645472370573, 'weight_decay': 1.0699632275513832e-05, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [04:46<00:00,  4.51batch/s, Train loss=0.9140, Train accuracy=0.5618]
+Training validation: 100% 185/185 [00:16<00:00, 11.16batch/s, Test loss=0.9210, Test accuracy=0.5617]
+Training: 100% 1293/1293 [04:44<00:00,  4.55batch/s, Train loss=0.8546, Train accuracy=0.5909]
+Training validation: 100% 185/185 [00:16<00:00, 11.46batch/s, Test loss=0.9372, Test accuracy=0.5366]
+Training:  42% 537/1293 [01:57<02:46,  4.55batch/s, Train loss=0.8205, Train accuracy=0.6062]
+
+Trial stopped.
