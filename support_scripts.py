@@ -1,11 +1,15 @@
 import os
 import random
 from datetime import datetime
+
+import optuna
 from tqdm import tqdm
+import pandas as pd
 import medmnist
 import matplotlib.pyplot as plt
 from medmnist import INFO, TissueMNIST
 import torch
+import torch.nn as nn
 import torchvision.transforms as transforms
 from torchvision.models import ResNet
 from torchmetrics.classification import MulticlassAccuracy
@@ -17,6 +21,8 @@ LEARNING_RATE = 0.001
 DIRECTORY_NAME = "TissueMNIST_Dataset"
 DATASET_NAME = "tissuemnist"
 EXPORT_DIRECTORY = "exported_models"
+
+RESULTS_CSV = "optuna_results.csv"
 
 TRAIN_DIR = os.path.join(DIRECTORY_NAME, "train")
 TEST_DIR = os.path.join(DIRECTORY_NAME, "test")
@@ -190,7 +196,7 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
         })
 
 
-def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLoader, loss_fn: torch.nn.Module) -> None:
+def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLoader, loss_fn: torch.nn.Module):
     """
     Performs the evaluation on the `model` on `dataloader`. The evaluation within this function is performed per one epoch,
     in a set number of batches. The function tracks the test loss and accuracy. This function is being called after
@@ -234,6 +240,9 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
                 "Test accuracy": f"{metric.compute().item():.4f}"
             })
 
+    final_accuracy = metric.compute().item()
+    return final_accuracy
+
 def export_trained_model(model: ResNet) -> None:
     """
     After the training of the model is performed, such model is to be exported, so that later, it can be loaded
@@ -256,3 +265,80 @@ def export_trained_model(model: ResNet) -> None:
     torch.save(model.state_dict(), model_path)
 
     print(f"Model exported to {model_path}")
+
+
+def objective(trial, model, train_dataloader, val_dataloader):
+    """
+    Optuna objective function tells Optuna how to train your model and what metric to optimize. It specifies what ranges
+    or options to explore for each hyperparameter. Optuna then uses Bayesian optimization (not brute force) to find
+    the most optimal values. It learns which regions of search space look promising.
+
+    Hyperparameters varied here are:
+    - Learning rate: Controls how aggressively model updates weights.
+    - Batch size: Affects gradient noise and convergence stability.
+    - Momentum (if SGD is used): Helps SGD escape shallow minima and smooth the updates.
+    - Weight Decay: Helps prevent overfitting
+
+    What is not tuned:
+    - Number of epochs: Kept constant for fairness (Optuna can't early stop cleanly across trials).
+    - Loss function: CrossEntropyLoss is the right choice for ResNet.
+    Model architecture: As the used ResNet architecture is being improved.
+
+    Args:
+        trial:
+    Returns:
+        Must return a single scalar (usually validation accuracy or validation loss).
+    """
+    # --- Hyperparameters to tune ---
+    lr = trial.suggest_float("lr", 1e-5, 1e-2, log=True)
+    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
+    momentum = trial.suggest_float("momentum", 0.7, 0.99)
+    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-2, log=True)
+    optimizer_name = trial.suggest_categorical("optimizer", ["SGD", "Adam"])
+    num_epochs = 3
+
+    if optimizer_name == "SGD":
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay)
+    elif optimizer_name == "Adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+
+    loss_fn = nn.CrossEntropyLoss()
+
+    model.to(device)
+
+    print(f"\nRunning trial {trial.number} with params: {trial.params}")
+
+    # --- Training loop ---
+    for epoch in range(num_epochs):
+        train_model_per_batch(model, train_dataloader, loss_fn, optimizer)
+        val_acc = evaluate_model_per_batch(model, val_dataloader, loss_fn)
+
+        # Report progress to Optuna (for pruning)
+        trial.report(val_acc, epoch)
+        if trial.should_prune():
+            raise optuna.TrialPruned()
+
+
+    # --- Logging results ---
+    print(f"Trial {trial.number} finished: accuracy={val_acc:.4f}, params={trial.params}")
+
+    # Save results to CSV
+    results_data = {
+        "trial": trial.number,
+        "accuracy": val_acc,
+        "lr": lr,
+        "batch_size": batch_size,
+        "momentum": momentum,
+        "weight_decay": weight_decay,
+        "optimizer": optimizer_name
+    }
+
+    # Create or append to results file
+    if not os.path.exists(RESULTS_CSV):
+        pd.DataFrame([results_data]).to_csv(RESULTS_CSV, index=False)
+    else:
+        df_existing = pd.read_csv(RESULTS_CSV)
+        df_new = pd.concat([df_existing, pd.DataFrame([results_data])], ignore_index=True)
+        df_new.to_csv(RESULTS_CSV, index=False)
+
+    return val_acc  # Optuna maximizes this
