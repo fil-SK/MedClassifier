@@ -51,7 +51,7 @@ if __name__ == '__main__':
     model = resnet101(weights=weights)
     # Replace final layer (Default ResNet101 outputs 1000 logits (prediction classes) per sample -- we need to set it to number of classes of the dataset)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
-    model.eval()
+    #model.eval()
 
     # Perform the classification on the test dataset --- using the original, untrained model
     #perform_inference(model, test_dataloader)

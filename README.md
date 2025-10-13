@@ -159,6 +159,11 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 ## Rezultati
 
+### log 00.10. 14.10.2025.
+
+- Korišćen Optuna framework za parametrizaciju hiperparametara. Usled nedostatka vremena model je pušten na samo 5 trial-a. Uspeo je da pronađe parametre koje su preciznost podigli na ~60%.
+- Međutim, ovo je i dalje neočekivana performantnost. Postoji mogućnost da je ResNet101 previše složen model, što utiče na to da overfituje. U kasnijim istraživanjima isprobati manje dublje Resnet modele - 18 i 50.
+
 ### log 21.03 12.10.2025.
 
 - Prvi test za klasifikaciju i optimizaciju modela. Rezultati zasad nedovoljno dobri. Inicijalno, model je pokazao preciznost od 10%. Treniranjem modela preciznost podignuta na oko 50%.
@@ -169,3 +174,4 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
   - Model: ResNet101
   - Loss funkcija: Cross Entropy Loss
   - Optimizer: SGD
+- Vreme izvršavanja: Približno 2h.
