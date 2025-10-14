@@ -159,6 +159,11 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 ## Rezultati
 
+### log 20.51. 14.10.2025.
+
+- Korišćen Optuna framework za parametrizaciju, ali za Resnet18 model. Model je pokazao brže poboljšanje, ali sam ubrzo obustavio testiranje, jer želim da probam drugačiji pristup pri treniranju.
+- Cilj: Trenirati od nule, bez pretreniranih težina (postoji mogućnost da ovde oni odmažu) i trenirati na značajno većem broju epoha (50).
+
 ### log 00.10. 14.10.2025.
 
 - Korišćen Optuna framework za parametrizaciju hiperparametara. Usled nedostatka vremena model je pušten na samo 5 trial-a. Uspeo je da pronađe parametre koje su preciznost podigli na ~60%.

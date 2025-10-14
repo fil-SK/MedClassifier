@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 import torch.optim as optim
 import torch.utils.data as data
 from tqdm import tqdm
@@ -47,54 +48,56 @@ if __name__ == '__main__':
 
 
     # Instantiate the model
-    weights = ResNet101_Weights.DEFAULT
-    model = resnet101(weights=weights)
+    #weights = ResNet101_Weights.DEFAULT
+    #model = resnet101(weights=weights)
+    model = resnet18()
     # Replace final layer (Default ResNet101 outputs 1000 logits (prediction classes) per sample -- we need to set it to number of classes of the dataset)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
-    #model.eval()
+    model.eval()
 
     # Perform the classification on the test dataset --- using the original, untrained model
-    #perform_inference(model, test_dataloader)
+    perform_inference(model, test_dataloader)
 
 
     # Train the model, to improve the performance
 
     # Set the loss function and optimizer
-    #loss_function = nn.CrossEntropyLoss()
+    loss_function = nn.CrossEntropyLoss()
     #optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=0.004076078213725125)
 
     # Perform the training of the model
-    #for epoch in range(NUM_EPOCHS):
-    #    print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}")
-    #    train_model_per_batch(model, train_dataloader, loss_function, optimizer)
-    #    evaluate_model_per_batch(model, val_dataloader, loss_function)
+    for epoch in range(NUM_EPOCHS):
+        print(f"\nEpoch {epoch + 1}/{NUM_EPOCHS}")
+        train_model_per_batch(model, train_dataloader, loss_function, optimizer)
+        evaluate_model_per_batch(model, val_dataloader, loss_function)
 
     # Evaluate the trained model
-    #model.cpu() # During evaluation, move model to CPU
-    #perform_inference(model, test_dataloader)
+    model.cpu() # During evaluation, move model to CPU
+    perform_inference(model, test_dataloader)
 
-    #export_trained_model(model)
+    export_trained_model(model)
 
 
     # Try modifying the hyperparameters
     #model_tuned = resnet101(weights=weights)
     #model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)     # Replace final layer
 
-    model_tuned = resnet18(weights=ResNet18_Weights.DEFAULT)
-    model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)  # Replace final layer
+    #model_tuned = resnet18(weights=ResNet18_Weights.DEFAULT)
+    #model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)  # Replace final layer
 
-    study = optuna.create_study(direction="maximize")
-    study.optimize(lambda trial: objective(trial,model_tuned, train_dataloader,val_dataloader,), n_trials=20)  # try 20 hyperparameter sets
+    #study = optuna.create_study(direction="maximize")
+    #study.optimize(lambda trial: objective(trial,model_tuned, train_dataloader,val_dataloader,), n_trials=20)  # try 20 hyperparameter sets
     # objective(trial, model_tuned, train_dataloader, val_dataloader)
 
-    print("Best trial:")
-    trial = study.best_trial
+    #print("Best trial:")
+    #trial = study.best_trial
 
     # Print results
-    print(f"Accuracy: {trial.value:.4f}")
-    print("Params:")
-    for key, value in trial.params.items():
-        print(f"{key}: {value}")
+    #print(f"Accuracy: {trial.value:.4f}")
+    #print("Params:")
+    #for key, value in trial.params.items():
+    #    print(f"{key}: {value}")
 
     # Save trial results
-    study.trials_dataframe().to_csv("optuna_results.csv", index=False)
+    #study.trials_dataframe().to_csv("optuna_results.csv", index=False)

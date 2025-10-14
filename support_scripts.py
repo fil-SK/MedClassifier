@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 from torchvision.models import ResNet
 from torchmetrics.classification import MulticlassAccuracy
 
-NUM_EPOCHS = 3
+NUM_EPOCHS = 50
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
 
