@@ -143,6 +143,18 @@ Moguće vrednosti:
 - `--set-batch-size`: Postavlja veličinu bačve za treniranje. Ukoliko se ne postavi, koristi se default `128`.
 - `--optimize-hyperparams`: Da li će se pokretati Optuna optimizacija hiperparametara. Ovo će samo izvršiti testiranje, ne i postavljanje tih vrednosti modela. Samo evaluacionog tipa.
 
+Primer pokretanja:
+
+```
+python main.py --model resnet18 --evaluate-default-model --train-model --set-optimizer adam --set-epochs 20 --set-batch-size 32
+```
+
+Primer samo Optuna optimizacije:
+
+```
+python main.py --model resnet18 --optimize-hyperparams
+```
+
 ## Google Colab
 
 Na lokalnom računaru, resursi su nedovoljni za efikasno izvršavanje (nedostatak GPU-a). Iz tog razloga, ovaj kod može se pokrenuti i kroz Google Colab.
