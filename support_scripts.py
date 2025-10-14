@@ -14,9 +14,11 @@ import torchvision.transforms as transforms
 from torchvision.models import ResNet
 from torchmetrics.classification import MulticlassAccuracy
 
-NUM_EPOCHS = 50
+NUM_EPOCHS = 10
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
+MOMENTUM = 0.9
+WEIGHT_DECAY = 0.004076078213725125
 
 DIRECTORY_NAME = "TissueMNIST_Dataset"
 DATASET_NAME = "tissuemnist"

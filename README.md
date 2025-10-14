@@ -112,7 +112,7 @@ Sav kod koji se izvršava nalazi se u `main.py` fajlu, a koji interno poziva skr
 - `view_dataset_contents(train_dataset)`: Preko matplotlib-a prikazuje sliku i njoj odgovarajuću labelu, za proizvoljno uzetu sliku iz dataseta.
 - `train_dataset.montage(length=10)`: Prikazuje 100 slika iz dataseta.
 
-Izvršavanje `main.py` sastoji se iz (uključujući i zakomentarisane delove):
+Izvršavanje `main.py` sastoji se iz:
 
 - Ispis informacija o korišćenom datasetu.
 - Kreiranje foldera u kom će se naći dataset(ovi) - svaki skup (train, val, test) ima svoj folder. Preuzimanje datih skupova.
@@ -122,7 +122,26 @@ Izvršavanje `main.py` sastoji se iz (uključujući i zakomentarisane delove):
 - Instanciranje modela i promenu finalnog FC sloja, tako da output-uje 8 klasa (toliko klasa postoji u korišćenom datasetu).
 - Izvršavanje klasifikacije na originalnom, netreniranom modelu.
 - Treniranje modela: po epohi, vrši se trening a potom validacija izvršenog treninga u toj epohi.
-- Nakon treniranja u potpunosti, validacija takvog modela i njegovo čuvanje.
+- Nakon treniranja u potpunosti, validacija takvog modela i njegovo čuvanje
+- Pokretanje Optuna frameworka za pronalaženje optimalnih hiperparametara.
+
+## Flagovi
+
+Program se pokreće uz odgovarajuće flagove, kojima se određuje šta će se sve izvršavati. Flagovi se mogu inkrementalno dodavati, tako da se unapređuju funkcionalnosti. Flagove treba dodavati razumno (ne može se vršiti optimizacija modela ako model nije specificiran).
+
+Moguće vrednosti:
+
+- `--print-dataset-info`: Ispisuje informacije o korišćenom datasetu.
+- `--visualise-data`: Prikazuje slika+labela kao i grupisanih 100 slika iz dataseta.
+- `--model`: Odabir modela koji se koristi. Moguće vrednosti su `resnet18` i `resnet101`.
+- `--pretrained-weights`: Da li model koristi pretrenirane težine iz PyTorch frameworka.
+- `--evaluate-default-model`: Za učitani model, da li se radi njegova evaluacija na test skupu.
+- `--train-model`: Da li se vrši treniranje učitanog modela.
+- `--set-optimizer`: Odabir optimizera koji će se koristiti. Moguće vrednosti su `sgd` i `adam`.
+- `--set-lr`: Postavljanje vrednosti za Learning rate. Ukoliko se ne navede, koristi se default `0.001`.
+- `--set-epochs`: Postavljanje vrednosti broj epoha za treniranje. Ukoliko se ne postavi, koristi se default `10`.
+- `--set-batch-size`: Postavlja veličinu bačve za treniranje. Ukoliko se ne postavi, koristi se default `128`.
+- `--optimize-hyperparams`: Da li će se pokretati Optuna optimizacija hiperparametara. Ovo će samo izvršiti testiranje, ne i postavljanje tih vrednosti modela. Samo evaluacionog tipa.
 
 ## Google Colab
 
