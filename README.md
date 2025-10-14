@@ -133,7 +133,7 @@ Moguće vrednosti:
 
 - `--print-dataset-info`: Ispisuje informacije o korišćenom datasetu.
 - `--visualise-data`: Prikazuje slika+labela kao i grupisanih 100 slika iz dataseta.
-- `--model`: Odabir modela koji se koristi. Moguće vrednosti su `resnet18` i `resnet101`.
+- `--model`: Odabir modela koji se koristi. Moguće vrednosti su `resnet18`, `resnet101` i `customnet`, gde se koristi implementacija jako jednostavnog modela, datog u MedMNIST repou.
 - `--pretrained-weights`: Da li model koristi pretrenirane težine iz PyTorch frameworka.
 - `--evaluate-default-model`: Za učitani model, da li se radi njegova evaluacija na test skupu.
 - `--train-model`: Da li se vrši treniranje učitanog modela.

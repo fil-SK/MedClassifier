@@ -5,9 +5,12 @@ import torch.utils.data as data
 import matplotlib.pyplot as plt
 import optuna
 from torchvision.models import resnet101, ResNet101_Weights, resnet18, ResNet18_Weights
+
+from custom_net import CustomNetMNIST
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
     get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
-    NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model, objective, MOMENTUM, WEIGHT_DECAY
+    NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model, objective, MOMENTUM, \
+    WEIGHT_DECAY, num_channels
 import argparse
 
 if __name__ == '__main__':
@@ -64,6 +67,8 @@ if __name__ == '__main__':
         else:
             model = resnet101()
         model.fc = nn.Linear(model.fc.in_features, num_classes)
+    elif args.model == "customnet":
+        model = CustomNetMNIST(num_channels, num_classes)
 
     if args.print_dataset_info:
         # Print info about the dataset
