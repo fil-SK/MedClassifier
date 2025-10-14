@@ -189,6 +189,8 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
         loss.backward()
         optimizer.step()
 
+        print(f"Train loss: {train_loss / total_samples:.3f}, train accuracy: {metric.compute().item():.4f}")
+
         # Live tqdm update
         pbar.set_postfix({
             "Train loss": f"{train_loss / total_samples:.4f}",
@@ -233,6 +235,8 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
 
             test_loss += loss.item() * batch_size
             metric.update(test_prediction_output, target_label.squeeze())  # Test accuracy
+
+            print(f"Test loss: {test_loss / total_samples:.3f}, test accuracy: {metric.compute().item():.4f}")
 
             # Live tqdm update
             pbar.set_postfix({

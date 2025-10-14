@@ -1,0 +1,42 @@
+
+Created directories:
+TissueMNIST_Dataset, TissueMNIST_Dataset/train, TissueMNIST_Dataset/val, TissueMNIST_Dataset/test
+
+100% 125M/125M [02:06<00:00, 984kB/s]
+100% 125M/125M [02:03<00:00, 1.01MB/s]
+100% 125M/125M [00:42<00:00, 2.92MB/s]
+Downloading: "https://download.pytorch.org/models/resnet101-cd907fc2.pth" to /root/.cache/torch/hub/checkpoints/resnet101-cd907fc2.pth
+100% 171M/171M [00:01<00:00, 174MB/s]
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+100% 44.7M/44.7M [00:00<00:00, 197MB/s]
+[I 2025-10-14 18:37:47,081] A new study created in memory with name: no-name-c61adc3e-8182-49b7-bcd4-6a2e855fa72d
+
+Running trial 0 with params: {'lr': 0.0007638582201924883, 'batch_size': 128, 'momentum': 0.798808346371626, 'weight_decay': 0.0006153103617340516, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [01:26<00:00, 14.90batch/s, Train loss=1.1329, Train accuracy=0.4414]
+Training validation: 100% 185/185 [00:05<00:00, 33.84batch/s, Test loss=1.1845, Test accuracy=0.4074]
+Training: 100% 1293/1293 [01:25<00:00, 15.08batch/s, Train loss=1.0308, Train accuracy=0.4938]
+Training validation: 100% 185/185 [00:05<00:00, 34.02batch/s, Test loss=1.2952, Test accuracy=0.4331]
+Training: 100% 1293/1293 [01:25<00:00, 15.14batch/s, Train loss=0.9952, Train accuracy=0.5137]
+Training validation: 100% 185/185 [00:05<00:00, 35.21batch/s, Test loss=1.3281, Test accuracy=0.4608]
+Trial 0 finished: accuracy=0.4608, params={'lr': 0.0007638582201924883, 'batch_size': 128, 'momentum': 0.798808346371626, 'weight_decay': 0.0006153103617340516, 'optimizer': 'Adam'}
+[I 2025-10-14 18:42:21,385] Trial 0 finished with value: 0.46077167987823486 and parameters: {'lr': 0.0007638582201924883, 'batch_size': 128, 'momentum': 0.798808346371626, 'weight_decay': 0.0006153103617340516, 'optimizer': 'Adam'}. Best is trial 0 with value: 0.46077167987823486.
+
+Running trial 1 with params: {'lr': 0.0004997969164297453, 'batch_size': 16, 'momentum': 0.9749742846440239, 'weight_decay': 0.0016866297615541381, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [01:24<00:00, 15.22batch/s, Train loss=0.9448, Train accuracy=0.5409]
+Training validation: 100% 185/185 [00:05<00:00, 35.96batch/s, Test loss=1.0828, Test accuracy=0.4588]
+Training: 100% 1293/1293 [01:24<00:00, 15.28batch/s, Train loss=0.9346, Train accuracy=0.5440]
+Training validation: 100% 185/185 [00:05<00:00, 33.46batch/s, Test loss=1.0323, Test accuracy=0.4966]
+Training: 100% 1293/1293 [01:24<00:00, 15.23batch/s, Train loss=0.9241, Train accuracy=0.5490]
+Training validation: 100% 185/185 [00:06<00:00, 30.37batch/s, Test loss=0.9509, Test accuracy=0.5356]
+Trial 1 finished: accuracy=0.5356, params={'lr': 0.0004997969164297453, 'batch_size': 16, 'momentum': 0.9749742846440239, 'weight_decay': 0.0016866297615541381, 'optimizer': 'Adam'}
+[I 2025-10-14 18:46:52,645] Trial 1 finished with value: 0.5355889797210693 and parameters: {'lr': 0.0004997969164297453, 'batch_size': 16, 'momentum': 0.9749742846440239, 'weight_decay': 0.0016866297615541381, 'optimizer': 'Adam'}. Best is trial 1 with value: 0.5355889797210693.
+
+Running trial 2 with params: {'lr': 5.908931732203273e-05, 'batch_size': 128, 'momentum': 0.88867636302923, 'weight_decay': 0.004076078213725125, 'optimizer': 'Adam'}
+Training: 100% 1293/1293 [01:25<00:00, 15.19batch/s, Train loss=0.8227, Train accuracy=0.6027]
+Training validation: 100% 185/185 [00:06<00:00, 29.15batch/s, Test loss=0.8989, Test accuracy=0.5759]
+Training: 100% 1293/1293 [01:24<00:00, 15.35batch/s, Train loss=0.7894, Train accuracy=0.6213]
+Training validation: 100% 185/185 [00:06<00:00, 28.81batch/s, Test loss=0.9004, Test accuracy=0.5696]
+Training:  68% 884/1293 [00:57<00:26, 15.41batch/s, Train loss=0.7653, Train accuracy=0.6348]
+[W 2025-10-14 18:50:52,129] Trial 2 failed with parameters: {'lr': 5.908931732203273e-05, 'batch_size': 128, 'momentum': 0.88867636302923, 'weight_decay': 0.004076078213725125, 'optimizer': 'Adam'} because of the following error: KeyboardInterrupt().
+
+Trial stopped.
