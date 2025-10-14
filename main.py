@@ -4,7 +4,7 @@ import torch.utils.data as data
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import optuna
-from torchvision.models import resnet101, ResNet101_Weights
+from torchvision.models import resnet101, ResNet101_Weights, resnet18, ResNet18_Weights
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
     get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
     NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model, objective
@@ -77,8 +77,11 @@ if __name__ == '__main__':
 
 
     # Try modifying the hyperparameters
-    model_tuned = resnet101(weights=weights)
-    model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)     # Replace final layer
+    #model_tuned = resnet101(weights=weights)
+    #model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)     # Replace final layer
+
+    model_tuned = resnet18(weights=ResNet18_Weights.DEFAULT)
+    model_tuned.fc = nn.Linear(model_tuned.fc.in_features, num_classes)  # Replace final layer
 
     study = optuna.create_study(direction="maximize")
     study.optimize(lambda trial: objective(trial,model_tuned, train_dataloader,val_dataloader,), n_trials=20)  # try 20 hyperparameter sets
