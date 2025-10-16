@@ -1,6 +1,8 @@
 import os
 import random
 from datetime import datetime
+import numpy as np
+from PIL import Image
 
 import optuna
 from tqdm import tqdm
@@ -52,24 +54,61 @@ def print_dataset_info() -> None:
     print(f"classes: {num_classes}, channels: {num_channels}, task: {task}")
 
 
-def get_dataclass_and_transforms():
+def get_dataclass_and_transforms(model_name:str):
     """
     Returns a DataClass object, used to download dataset, and Transforms, to apply data augmentation.
 
     Args:
-        (None)
+        model_name (str): Model used, passed through main argument. If `customnet`, then shape (1,H,W) is to be used.
+        Otherwise, use (3,H,W) shape.
     Returns:
         A tuple consisting of DataClass and Transforms.
     """
     DataClass = getattr(medmnist, info['python_class'])
 
-    data_transform = transforms.Compose([
-        transforms.ToTensor(),                           # (1,H,W)
-        transforms.Lambda(lambda x: x.repeat(3, 1, 1)),  # (3,H,W)
-        transforms.Normalize(mean=[.5], std=[.5])
-    ])
+    if model_name == "customnet":
+        data_transform = transforms.Compose([
+            transforms.ToTensor(),  # (1,H,W)
+            transforms.Normalize(mean=[.5], std=[.5])
+        ])
+    else:
+        data_transform = transforms.Compose([
+            transforms.ToTensor(),                           # (1,H,W)
+            transforms.Lambda(lambda x: x.repeat(3, 1, 1)),  # (3,H,W)
+            transforms.Normalize(mean=[.5], std=[.5])
+        ])
 
     return DataClass, data_transform
+
+
+def extract_npz_files():
+    print("Extracting npz files...")
+    extract_single_npz(f"./{TRAIN_DIR}", "train")
+    extract_single_npz(f"./{VAL_DIR}", "val")
+    extract_single_npz(f"./{TEST_DIR}", "test")
+    print("Extraction complete.")
+
+
+def extract_single_npz(dataset_path:str, subset_type:str):
+    print(f"Extracting {dataset_path}")
+
+    data = np.load(f"{dataset_path}/tissuemnist_224.npz")
+
+    save_dir = f"./tissueMNIST_dataset_extracted/{subset_type}"
+    os.makedirs(save_dir, exist_ok=True)
+
+    images = data["train_images"]
+    labels = data["train_labels"]
+
+    for i, (img, label) in enumerate(tqdm(zip(images, labels), total=len(images))):
+        label_dir = os.path.join(save_dir, str(label))
+        os.makedirs(label_dir, exist_ok=True)
+
+        # Convert grayscale to uint8 if needed
+        img = Image.fromarray((img * 255).astype(np.uint8))
+        img.save(os.path.join(label_dir, f"{i}.png"))
+
+    print(f"Finished extracting {dataset_path}")
 
 def create_directories() -> bool:
     """
@@ -191,8 +230,6 @@ def train_model_per_batch(model : ResNet, dataloader : torch.utils.data.DataLoad
         loss.backward()
         optimizer.step()
 
-        print(f"Train loss: {train_loss / total_samples:.3f}, train accuracy: {metric.compute().item():.4f}")
-
         # Live tqdm update
         pbar.set_postfix({
             "Train loss": f"{train_loss / total_samples:.4f}",
@@ -237,8 +274,6 @@ def evaluate_model_per_batch(model : ResNet, dataloader: torch.utils.data.DataLo
 
             test_loss += loss.item() * batch_size
             metric.update(test_prediction_output, target_label.squeeze())  # Test accuracy
-
-            print(f"Test loss: {test_loss / total_samples:.3f}, test accuracy: {metric.compute().item():.4f}")
 
             # Live tqdm update
             pbar.set_postfix({

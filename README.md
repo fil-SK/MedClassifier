@@ -190,6 +190,13 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 ## Rezultati
 
+### Treniranje 224x224 dataseta na CPU
+
+<img src="./result_logs/training_224_dataset_on_cpu.png" />
+
+- Pokretanje optimizacije hiperparametara odnosno treninga za jednu epohu, na ResNet18, za slike ove rezolucije rezultuje izvršavanjem od 8h, što je neizvodljivo.
+- Pokretanjem istog dataseta na Google Colab-u freeze-uje čitav setup - pokušati da se `.npz` arhiva raspakuje na zasebne slike i labele i onda ih takve učitavati.
+
 ### log 20.51. 14.10.2025.
 
 - Korišćen Optuna framework za parametrizaciju, ali za Resnet18 model. Model je pokazao brže poboljšanje, ali sam ubrzo obustavio testiranje, jer želim da probam drugačiji pristup pri treniranju.

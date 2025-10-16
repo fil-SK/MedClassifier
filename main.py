@@ -10,7 +10,7 @@ from custom_net import CustomNetMNIST
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
     get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
     NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model, objective, MOMENTUM, \
-    WEIGHT_DECAY, num_channels
+    WEIGHT_DECAY, num_channels, extract_npz_files
 import argparse
 
 if __name__ == '__main__':
@@ -34,17 +34,21 @@ if __name__ == '__main__':
     epochs = args.set_epochs[0] if args.set_epochs else NUM_EPOCHS
     batch_sz = args.set_batch_size[0] if args.set_batch_size else BATCH_SIZE
 
+    model_name = args.model[0] if args.model else "blank"
     # Get dataclass and transform
-    DataClass, data_transform = get_dataclass_and_transforms()
+    DataClass, data_transform = get_dataclass_and_transforms(model_name)
 
     # Create dataset directories
     dataset_not_exists = create_directories()
     to_download_dataset = dataset_not_exists
 
     # Download dataset
-    train_dataset = DataClass(split='train', transform=data_transform, download=to_download_dataset, root=f"./{TRAIN_DIR}")
-    val_dataset = DataClass(split='val', transform=data_transform, download=to_download_dataset, root=f"./{VAL_DIR}")
-    test_dataset = DataClass(split='test', transform=data_transform, download=to_download_dataset, root=f"./{TEST_DIR}")
+    train_dataset = DataClass(split='train', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TRAIN_DIR}")
+    val_dataset = DataClass(split='val', transform=data_transform, size=224,  download=to_download_dataset, root=f"./{VAL_DIR}")
+    test_dataset = DataClass(split='test', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TEST_DIR}")
+
+    # Extract npz datasets
+    extract_npz_files()
 
     # Encapsulate different sub-datasets into DataLoaders
     train_dataloader = data.DataLoader(dataset=train_dataset, batch_size=batch_sz, shuffle=True)
@@ -52,22 +56,21 @@ if __name__ == '__main__':
     test_dataloader = data.DataLoader(dataset=test_dataset, batch_size=batch_sz, shuffle=False)
 
 
-
     # Instantiate the model
-    if args.model == "resnet18":
+    if args.model and args.model[0] == "resnet18":
         if args.pretrained_weights:
             model = resnet18(weights=ResNet18_Weights.DEFAULT)
         else:
             model = resnet18()
         model.fc = nn.Linear(model.fc.in_features, num_classes)     # Replace final layer (Default ResNet101 outputs 1000 logits (prediction classes) per sample -- we need to set it to number of classes of the dataset)
 
-    elif args.model == "resnet101":
+    elif args.model and args.model[0] == "resnet101":
         if args.pretrained_weights:
             model = resnet101(weights=ResNet101_Weights.DEFAULT)
         else:
             model = resnet101()
         model.fc = nn.Linear(model.fc.in_features, num_classes)
-    elif args.model == "customnet":
+    elif args.model and args.model[0] == "customnet":
         model = CustomNetMNIST(num_channels, num_classes)
 
     if args.print_dataset_info:
@@ -100,9 +103,9 @@ if __name__ == '__main__':
         # Set the loss function and optimizer
         loss_function = nn.CrossEntropyLoss()
 
-        if args.set_optimizer == "sgd":
+        if args.set_optimizer and args.set_optimizer[0] == "sgd":
             optimizer = optim.SGD(model.parameters(), lr=lr, momentum=MOMENTUM)
-        elif args.set_optimizer == "adam":
+        elif args.set_optimizer and args.set_optimizer[0] == "adam":
             optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
 
         # Perform the training of the model
@@ -119,6 +122,7 @@ if __name__ == '__main__':
 
     if args.optimize_hyperparams:
         # Try modifying the hyperparameters
+        print("Optimizing the hyperparameters using Optuna framework.")
         study = optuna.create_study(direction="maximize")
         study.optimize(lambda trial: objective(trial, model, train_dataloader,val_dataloader,), n_trials=20)  # try 20 hyperparameter sets
 
