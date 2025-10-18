@@ -16,6 +16,7 @@ import argparse
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--extract-npz", action="store_true", help="Extract 224x224 TissueMNIST npz archive.")
     parser.add_argument("--print-dataset-info", action="store_true", help="Prints info about dataset.")
     parser.add_argument("--visualise-data", action="store_true", help="Displays image + label, as well as montage of 100 images.")
     parser.add_argument("--model", type=str, nargs=1, help="Choose a model to use.")
@@ -48,7 +49,8 @@ if __name__ == '__main__':
     test_dataset = DataClass(split='test', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TEST_DIR}")
 
     # Extract npz datasets
-    extract_npz_files()
+    if args.extract_npz:
+        extract_npz_files()
 
     # Encapsulate different sub-datasets into DataLoaders
     train_dataloader = data.DataLoader(dataset=train_dataset, batch_size=batch_sz, shuffle=True)
