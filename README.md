@@ -125,6 +125,10 @@ Izvršavanje `main.py` sastoji se iz:
 - Nakon treniranja u potpunosti, validacija takvog modela i njegovo čuvanje
 - Pokretanje Optuna frameworka za pronalaženje optimalnih hiperparametara.
 
+# TODO:
+
+- Deo za 224x224 dataset objasnjenje.
+
 ## Flagovi
 
 Program se pokreće uz odgovarajuće flagove, kojima se određuje šta će se sve izvršavati. Flagovi se mogu inkrementalno dodavati, tako da se unapređuju funkcionalnosti. Flagove treba dodavati razumno (ne može se vršiti optimizacija modela ako model nije specificiran).
@@ -133,7 +137,7 @@ Moguće vrednosti:
 
 - `--extract-npz`: Ekstraktuje `.npz` arhivu, za 224x224 dataset.
 - `--print-dataset-info`: Ispisuje informacije o korišćenom datasetu.
-- `--visualise-data`: Prikazuje slika+labela kao i grupisanih 100 slika iz dataseta.
+- `--visualise-data`: Prikazuje slika+labela kao i grupisanih 100 slika iz dataseta. JEDINO DOSTUPNO za 28x28 dataset.
 - `--model`: Odabir modela koji se koristi. Moguće vrednosti su `resnet18`, `resnet101` i `customnet`, gde se koristi implementacija jako jednostavnog modela, datog u MedMNIST repou.
 - `--pretrained-weights`: Da li model koristi pretrenirane težine iz PyTorch frameworka.
 - `--evaluate-default-model`: Za učitani model, da li se radi njegova evaluacija na test skupu.

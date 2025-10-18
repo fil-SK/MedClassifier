@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 
 import optuna
+from torchvision.datasets import ImageFolder
 from tqdm import tqdm
 import pandas as pd
 import medmnist
@@ -32,6 +33,12 @@ TRAIN_DIR = os.path.join(DIRECTORY_NAME, "train")
 TEST_DIR = os.path.join(DIRECTORY_NAME, "test")
 VAL_DIR = os.path.join(DIRECTORY_NAME, "val")
 
+# For custom unpacked 224x224 dataset
+EXTRACTED_ROOT = "tissueMNIST_dataset_extracted"
+ARCHIVE_FILENAME = "tissuemnist_224.npz"
+IMAGENET_MEAN = [0.485, 0.456, 0.406]
+IMAGENET_STD = [0.229, 0.224, 0.225]
+
 random.seed()  # Seeds from current system time by default
 
 info = INFO[DATASET_NAME]
@@ -40,6 +47,66 @@ num_channels = info['n_channels']
 num_classes = len(info['label'])
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# ---------- Set of support functions to unpack and use unpacked 224x224 dataset START ----------
+
+def load_datasets(model_name: str, dataset_source: str, download: bool):
+    """
+    Returns the specific 224x224 dataset.
+    """
+    if dataset_source == "imagefolder":
+        return load_imagefolder_datasets(model_name, download)
+
+
+def load_imagefolder_datasets(model_name: str, download: bool):
+    """
+    Load datasets from the extracted ImageFolder structure.
+
+    # NOTE! Must be called after the extraction has been performed. Otherwise, will CRASH.
+    """
+
+    train_transform = build_transform(model_name, "imagefolder", "train")
+    eval_transform = build_transform(model_name, "imagefolder", "val")
+
+    train_dataset = ImageFolder(os.path.join(EXTRACTED_ROOT, "train"), transform=train_transform)
+    val_dataset = ImageFolder(os.path.join(EXTRACTED_ROOT, "val"), transform=eval_transform)
+    test_dataset = ImageFolder(os.path.join(EXTRACTED_ROOT, "test"), transform=eval_transform)
+
+    return train_dataset, val_dataset, test_dataset
+
+
+def build_transform(model_name: str, dataset_source: str, split: str) -> transforms.Compose:
+    """
+    Create a transform pipeline for the ImageFolder dataset source and split.
+    """
+
+    augment = split == "train"
+
+    # Non custom models expect 3-channel tensors at ImageNet scale.
+    ops = []
+    if dataset_source == "imagefolder":
+        ops.extend(
+            [
+                transforms.Grayscale(num_output_channels=3),
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+            ]
+        )
+        if augment:
+            ops.extend(
+                [
+                    transforms.RandomHorizontalFlip(),
+                    transforms.RandomRotation(15),
+                ]
+            )
+        ops.append(transforms.ToTensor())
+
+
+    ops.append(transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD))
+    return transforms.Compose(ops)
+
+
+# ---------- Set of support functions to unpack and use unpacked 224x224 dataset END ----------
 
 def print_dataset_info() -> None:
     """

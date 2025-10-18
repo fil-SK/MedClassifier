@@ -17,6 +17,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--extract-npz", action="store_true", help="Extract 224x224 TissueMNIST npz archive.")
+    parser.add_argument("--use-224-dataset-size", action="store_true", help="Use 224x224 TissueMNIST dataset.")
     parser.add_argument("--print-dataset-info", action="store_true", help="Prints info about dataset.")
     parser.add_argument("--visualise-data", action="store_true", help="Displays image + label, as well as montage of 100 images.")
     parser.add_argument("--model", type=str, nargs=1, help="Choose a model to use.")
@@ -36,21 +37,31 @@ if __name__ == '__main__':
     batch_sz = args.set_batch_size[0] if args.set_batch_size else BATCH_SIZE
 
     model_name = args.model[0] if args.model else "blank"
-    # Get dataclass and transform
-    DataClass, data_transform = get_dataclass_and_transforms(model_name)
+
+    # Extract npz datasets
+    if args.extract_npz:
+        extract_npz_files()
+
 
     # Create dataset directories
     dataset_not_exists = create_directories()
     to_download_dataset = dataset_not_exists
 
-    # Download dataset
-    train_dataset = DataClass(split='train', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TRAIN_DIR}")
-    val_dataset = DataClass(split='val', transform=data_transform, size=224,  download=to_download_dataset, root=f"./{VAL_DIR}")
-    test_dataset = DataClass(split='test', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TEST_DIR}")
 
-    # Extract npz datasets
-    if args.extract_npz:
-        extract_npz_files()
+    if args.use_224_dataset_size:
+        dataset_source = "imagefolder"      # Take dataset from the saved images folder
+        train_dataset, val_dataset, test_dataset = load_datasets(model_name, dataset_source, to_download_dataset)
+    else:
+        # Get dataclass and transform
+        DataClass, data_transform = get_dataclass_and_transforms(model_name)
+
+
+
+        # Download dataset
+        train_dataset = DataClass(split='train', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TRAIN_DIR}")
+        val_dataset = DataClass(split='val', transform=data_transform, size=224,  download=to_download_dataset, root=f"./{VAL_DIR}")
+        test_dataset = DataClass(split='test', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TEST_DIR}")
+
 
     # Encapsulate different sub-datasets into DataLoaders
     train_dataloader = data.DataLoader(dataset=train_dataset, batch_size=batch_sz, shuffle=True)
