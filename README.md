@@ -136,6 +136,7 @@ Program se pokreće uz odgovarajuće flagove, kojima se određuje šta će se sv
 Moguće vrednosti:
 
 - `--extract-npz`: Ekstraktuje `.npz` arhivu, za 224x224 dataset.
+- `--use-224-dataset-size`: Specificira da se eksplicitno koristi 224x224 dataset. Neophodno je da je prethodno ekstraktovana npz arhiva, inače, program puca.
 - `--print-dataset-info`: Ispisuje informacije o korišćenom datasetu.
 - `--visualise-data`: Prikazuje slika+labela kao i grupisanih 100 slika iz dataseta. JEDINO DOSTUPNO za 28x28 dataset.
 - `--model`: Odabir modela koji se koristi. Moguće vrednosti su `resnet18`, `resnet101` i `customnet`, gde se koristi implementacija jako jednostavnog modela, datog u MedMNIST repou.

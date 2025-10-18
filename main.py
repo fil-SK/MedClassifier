@@ -10,7 +10,7 @@ from custom_net import CustomNetMNIST
 from support_scripts import create_directories, TRAIN_DIR, TEST_DIR, VAL_DIR, print_dataset_info, \
     get_dataclass_and_transforms, BATCH_SIZE, view_dataset_contents, LEARNING_RATE, perform_inference, num_classes, \
     NUM_EPOCHS, train_model_per_batch, evaluate_model_per_batch, export_trained_model, objective, MOMENTUM, \
-    WEIGHT_DECAY, num_channels, extract_npz_files
+    WEIGHT_DECAY, num_channels, extract_npz_files, load_datasets
 import argparse
 
 if __name__ == '__main__':
@@ -54,8 +54,6 @@ if __name__ == '__main__':
     else:
         # Get dataclass and transform
         DataClass, data_transform = get_dataclass_and_transforms(model_name)
-
-
 
         # Download dataset
         train_dataset = DataClass(split='train', transform=data_transform, size=224, download=to_download_dataset, root=f"./{TRAIN_DIR}")
