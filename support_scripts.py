@@ -1,3 +1,4 @@
+import argparse
 import os
 import random
 from datetime import datetime
@@ -92,23 +93,74 @@ def extract_npz_files():
 def extract_single_npz(dataset_path:str, subset_type:str):
     print(f"Extracting {dataset_path}")
 
-    data = np.load(f"{dataset_path}/tissuemnist_224.npz")
+    archive_path = os.path.join(dataset_path, "tissuemnist_224.npz")
+    if not os.path.exists(archive_path):
+        raise FileNotFoundError(f"Expected archive not found: {archive_path}")
 
-    save_dir = f"./tissueMNIST_dataset_extracted/{subset_type}"
+    subset_keys = {
+        "train": ("train_images", "train_labels"),
+        "val": ("val_images", "val_labels"),
+        "test": ("test_images", "test_labels"),
+    }
+
+    try:
+        image_key, label_key = subset_keys[subset_type]
+    except KeyError as exc:
+        raise ValueError(
+            f"Unsupported subset '{subset_type}'. Expected one of: {', '.join(subset_keys)}"
+        ) from exc
+
+    save_dir = os.path.join("./tissueMNIST_dataset_extracted", subset_type)
     os.makedirs(save_dir, exist_ok=True)
 
-    images = data["train_images"]
-    labels = data["train_labels"]
+    label_records = []
 
-    for i, (img, label) in enumerate(tqdm(zip(images, labels), total=len(images))):
-        label_dir = os.path.join(save_dir, str(label))
-        os.makedirs(label_dir, exist_ok=True)
+    with np.load(archive_path, mmap_mode="r", allow_pickle=False) as data:
+        images = data[image_key]
+        labels = data[label_key]
 
-        # Convert grayscale to uint8 if needed
-        img = Image.fromarray((img * 255).astype(np.uint8))
-        img.save(os.path.join(label_dir, f"{i}.png"))
+        if len(images) != len(labels):
+            raise RuntimeError(
+                f"Mismatched image/label counts in '{archive_path}' for subset '{subset_type}': "
+                f"{len(images)} images vs {len(labels)} labels"
+            )
 
-    print(f"Finished extracting {dataset_path}")
+        for index, (img, label) in enumerate(tqdm(zip(images, labels), total=len(images))):
+            if isinstance(label, np.ndarray):
+                label_id = int(label.item())
+            else:
+                label_id = int(label)
+            label_records.append({"filename": f"{index}.png", "label": label_id})
+
+            label_dir = os.path.join(save_dir, str(label_id))
+            os.makedirs(label_dir, exist_ok=True)
+
+            img_uint8 = (img * 255).astype(np.uint8)
+            Image.fromarray(img_uint8).save(os.path.join(label_dir, f"{index}.png"))
+
+    labels_csv = os.path.join(save_dir, "labels.csv")
+    pd.DataFrame(label_records).to_csv(labels_csv, index=False)
+
+    print(f"Finished extracting {dataset_path}. Labels saved to {labels_csv}")
+
+
+def _build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Utility helpers for the TissueMNIST experiments. Use the available "
+            "flags to trigger standalone maintenance jobs such as extracting "
+            "the 224x224 NPZ archives into image folders."
+        )
+    )
+    parser.add_argument(
+        "--extract-npz",
+        action="store_true",
+        help=(
+            "Extract the 224x224 TissueMNIST NPZ archives located inside the "
+            "train/val/test directories under TissueMNIST_Dataset."
+        ),
+    )
+    return parser
 
 def create_directories() -> bool:
     """
@@ -383,3 +435,17 @@ def objective(trial, model, train_dataloader, val_dataloader):
         df_new.to_csv(RESULTS_CSV, index=False)
 
     return val_acc  # Optuna maximizes this
+
+
+def main() -> None:
+    parser = _build_arg_parser()
+    args = parser.parse_args()
+
+    if args.extract_npz:
+        extract_npz_files()
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

@@ -104,6 +104,16 @@ Pojašnjenje:
 - `TissueMNIST_Dataset` - Folder koji sadrži slike korišćene za proces klasifikacije, grupisane u podfoldere koji predstavljaju podskupove glavnog dataseta. Sadržaj foldera čini `tissuemnist.npz`, što je NumPy kontejner.
 - `tissuemnist.npz` - NumPy kontejner koji sadrži više `.npy` fajlova u arhivi. Svaki podfolder sadrži njemu relevantne slike.
 
+### Raspakivanje TissueMNIST arhiva
+
+Kako bi se `.npz` arhive sa 224x224 slikama i labelama pretvorile u klasične direktorijume sa PNG fajlovima, u repou postoji pomoćni CLI. Nakon što preuzmete zvanične `tissuemnist_224.npz` fajlove i smestite ih u `TissueMNIST_Dataset/train`, `TissueMNIST_Dataset/val` i `TissueMNIST_Dataset/test`, pokrenite:
+
+```
+python support_scripts.py --extract-npz
+```
+
+Komanda će za svaku splitsku arhivu kreirati direktorijume `tissueMNIST_dataset_extracted/<split>/<label_id>` i u njima sačuvati slike u PNG formatu, a pored toga generisaće i `labels.csv` datoteku sa mapiranjem fajl → labela.
+
 ## Tok programa
 
 Sav kod koji se izvršava nalazi se u `main.py` fajlu, a koji interno poziva skripte i parametre iz `support_scripts.py` fajla. `main.py` ima delove koji su zakomentarisani, a koji mogu biti korisni pri pregledu:
