@@ -190,6 +190,10 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 ## Rezultati
 
+### 18.10.2025.
+
+- MedMNIST se sastoji od datasetova dve rezolucije: 28x28 i 224x224. Inicijalno, testiranja su rađena za 28x28, jer je to default-ni dataset koji se preuzima. Specificiranjem `size=224` zahteva se preuzimanje 224x224 dataseta. Međutim, zbog veličine dataseta, nije moguća njegova obrada direktno u kodu zbog veličine, s obzirom da je zapakovan u `npz` arhivu. Stoga, za rad sa njim neophodno je arhivu raspakovati, a onda koristiti ručno takav dataset - slike i labele.
+
 ### Treniranje 224x224 dataseta na CPU
 
 <img src="./result_logs/training_224_dataset_on_cpu.png" />
@@ -201,11 +205,13 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 - Korišćen Optuna framework za parametrizaciju, ali za Resnet18 model. Model je pokazao brže poboljšanje, ali sam ubrzo obustavio testiranje, jer želim da probam drugačiji pristup pri treniranju.
 - Cilj: Trenirati od nule, bez pretreniranih težina (postoji mogućnost da ovde oni odmažu) i trenirati na značajno većem broju epoha (50).
+- Korišćen dataset: 28x28
 
 ### log 00.10. 14.10.2025.
 
 - Korišćen Optuna framework za parametrizaciju hiperparametara. Usled nedostatka vremena model je pušten na samo 5 trial-a. Uspeo je da pronađe parametre koje su preciznost podigli na ~60%.
 - Međutim, ovo je i dalje neočekivana performantnost. Postoji mogućnost da je ResNet101 previše složen model, što utiče na to da overfituje. U kasnijim istraživanjima isprobati manje dublje Resnet modele - 18 i 50.
+- Korišćen dataset: 28x28
 
 ### log 21.03 12.10.2025.
 
@@ -217,4 +223,5 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
   - Model: ResNet101
   - Loss funkcija: Cross Entropy Loss
   - Optimizer: SGD
+  - Korišćen dataset: 28x28
 - Vreme izvršavanja: Približno 2h.
