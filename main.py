@@ -28,6 +28,8 @@ if __name__ == '__main__':
     parser.add_argument("--set-lr", nargs=1, type=float, help="Set learning rate, otherwise 0.001 is used.")
     parser.add_argument("--set-epochs", nargs=1, type=int, help="Set number of epochs to train, otherwise 10 is used.")
     parser.add_argument("--set-batch-size", nargs=1, type=int, help="Set batch size for training.")
+    parser.add_argument("--set-weight-decay", nargs=1, type=float, help="Set weight decay for training, for Adam optimizer.")
+    parser.add_argument("--set-momentum", nargs=1, type=float, help="Set momentum for training, for SGD optimizer.")
     parser.add_argument("--optimize-hyperparams", action="store_true", help="Optimize hyperparameters using Optuna framework.")
     args = parser.parse_args()
 
@@ -35,6 +37,8 @@ if __name__ == '__main__':
     lr = args.set_lr[0] if args.set_lr else LEARNING_RATE
     epochs = args.set_epochs[0] if args.set_epochs else NUM_EPOCHS
     batch_sz = args.set_batch_size[0] if args.set_batch_size else BATCH_SIZE
+    weight_decay = args.set_weight_decay[0] if args.set_weight_decay else WEIGHT_DECAY
+    momentum = args.set_momentum[0] if args.set_momentum else MOMENTUM
 
     model_name = args.model[0] if args.model else "blank"
 
@@ -115,9 +119,9 @@ if __name__ == '__main__':
         loss_function = nn.CrossEntropyLoss()
 
         if args.set_optimizer and args.set_optimizer[0] == "sgd":
-            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=MOMENTUM)
+            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
         elif args.set_optimizer and args.set_optimizer[0] == "adam":
-            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
         # Perform the training of the model
         for epoch in range(epochs):

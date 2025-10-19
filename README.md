@@ -61,6 +61,15 @@ Posmatra se jedan podskup krovnog [MedMNIST](https://medmnist.com/) dataseta - T
     - Proximal Tubule Segments
     - Thick Ascending Limb
 
+Dataset ima svoja dva izdanja, u zavisnosti od rezolucije korišćenih slika:
+
+- 28x28
+- 224x224
+
+U ovoj analizi korišćena su oba dataseta. Od toga koji će biti korišćen zavisi da li se koristi `size` argument. Specificiranjem `size=224` preuzima se 224x224 dataset.
+
+Zbog potrebne CPU snage, nije bilo moguće raditi sa 224x224 datasetom u originalnom, arhiv fajlu, već je neophodno da isti bude raspakovan, enkapsuliran u ImageFolder dataset, i zatim korišćen dalje.
+
 #### PyTorch framework
 
 Korišćen je PyTorch kao okvirni framework za rad i njihov ugrađeni [ResNet101 model](https://docs.pytorch.org/vision/main/_modules/torchvision/models/resnet.html#ResNet101_Weights), sa pretreniranim weight-ovima.
@@ -125,7 +134,7 @@ Izvršavanje `main.py` sastoji se iz:
 - Nakon treniranja u potpunosti, validacija takvog modela i njegovo čuvanje
 - Pokretanje Optuna frameworka za pronalaženje optimalnih hiperparametara.
 
-# TODO:
+# Dataset:
 
 - Deo za 224x224 dataset objasnjenje.
 
@@ -147,6 +156,8 @@ Moguće vrednosti:
 - `--set-lr`: Postavljanje vrednosti za Learning rate. Ukoliko se ne navede, koristi se default `0.001`.
 - `--set-epochs`: Postavljanje vrednosti broj epoha za treniranje. Ukoliko se ne postavi, koristi se default `10`.
 - `--set-batch-size`: Postavlja veličinu bačve za treniranje. Ukoliko se ne postavi, koristi se default `128`.
+- `--set-weight-decay`: Postavlja weight decay za Adam optimizer.
+- `--set-momentum`: Postavlja momentum za SGD optimizer.
 - `--optimize-hyperparams`: Da li će se pokretati Optuna optimizacija hiperparametara. Ovo će samo izvršiti testiranje, ne i postavljanje tih vrednosti modela. Samo evaluacionog tipa.
 
 Primer pokretanja:
@@ -196,9 +207,38 @@ Da bi se omogućilo izvršavanje na GPU, neophodno je omogućiti to kroz Google 
 
 ## Rezultati
 
+Zvanični rezultati sa MedMNIST-a, za TissueMNIST dataset su (posmatramo sekciju ACC - accuracy tj. preciznost):
+
+<img src="./result_logs/tissue_mnist_official_benchmark.png" />
+
+Rezultati koje smo mi postigli u našem radu su:
+
+### Dataset 224x224
+
+| Model  | Optimizer | Br. epoha | Batch size | Learning rate | Weight decay | PRECIZNOST |
+|--------|-----------|--------|---------| --- |--------|---------|
+| ResNet18 | TODO      | | | | | | |
+
+### Dataset 28x28
+
+| Model  | Optimizer | Br. epoha | Batch size | Learning rate | Weight decay | PRECIZNOST |
+|--------|-----------|--------|---------| --- |--------------|---------|
+| ResNet18  | TODO      | | | | | | |
+
+Napomene:
+- U toku istraživanja, odustalo se od primene ResNet101 modela, jer bi primena malo doprinela a potencijalno previše overfitovala, uz dosta veće potrebno vreme za treniranje. 
+- Adam optimizer se pokazao kao bolji od SGD-a tokom faze istraživanja rezultata, tako da je u tabelama sa rezultatima korišćen samo taj.
+- Modeli su, uglavnom, jako brzo konvergirali ka maksimalnoj preciznosti, tako da je i broj epoha u finalnim rezultatima jednak. Takođe, držeći jednak broj epoha, daje nam bolju opštost pri poređenju modela.
+
+## Analiza
+
 ### 18.10.2025.
 
+<img src="./result_logs/execution_time_18-10-2025.png" />
+
 - MedMNIST se sastoji od datasetova dve rezolucije: 28x28 i 224x224. Inicijalno, testiranja su rađena za 28x28, jer je to default-ni dataset koji se preuzima. Specificiranjem `size=224` zahteva se preuzimanje 224x224 dataseta. Međutim, zbog veličine dataseta, nije moguća njegova obrada direktno u kodu zbog veličine, s obzirom da je zapakovan u `npz` arhivu. Stoga, za rad sa njim neophodno je arhivu raspakovati, a onda koristiti ručno takav dataset - slike i labele.
+- Pokretanjem Optuna frameworka dobilo se unapređenje preciznosti od ~60%, što je, izgleda, maksimum koji je ovde moguće postići.
+- Ovo i nije neočekivano, budući da na zvaničnom MedMNIST sajtu, za ResNet18 na ovom datasetu preciznost iznosi ~67%.
 
 ### Treniranje 224x224 dataseta na CPU
 
